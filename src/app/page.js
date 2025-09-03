@@ -1,10 +1,13 @@
 "use client";
 
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import React from 'react'
+import React from 'react';
+
 import { shortenUrl } from "@/services/shorten";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+
 
 export default function ShortenURL() {
   const [url, setUrl] = React.useState("");
@@ -12,26 +15,35 @@ export default function ShortenURL() {
   const [error, setError] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState("");
   const [errorDescription, setErrorDescription] = React.useState("");
+  const urlRegex = /^(https?:\/\/)?([\w-]+(\.[\w-]+)+)(\/[\w-./?%&=]*)?$/i;
 
+  const darkStyles = {
+    main: "flex min-h-screen flex-col items-center justify-center p-24 bg-[#18181b] text-white",
+    card: "mb-32 flex w-full max-w-5xl flex-col items-center justify-center bg-[#23232a] rounded-xl shadow-2xl border border-[#333] p-8", // Added padding
+    heading: "text-4xl font-bold mb-8 text-white drop-shadow-lg",
+    input: "w-full p-4 text-lg bg-[#23232a] text-white border border-[#333] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6366f1]",
+    button: "mt-4 w-full p-4 text-lg font-bold rounded-lg bg-[#6366f1] text-white shadow-lg transition-all duration-200 border-2 border-transparent hover:shadow-2xl hover:border-[#a5b4fc] hover:ring-2 hover:ring-[#a5b4fc] focus:outline-none focus:ring-2 focus:ring-[#6366f1] cursor-pointer",
+    alert: "mb-4 bg-[#23232a] text-white border border-[#6366f1] rounded-lg shadow-lg",
+    success: "flex-1 bg-[#23232a] text-[#a5b4fc] border border-[#6366f1] rounded-lg shadow-lg px-4 py-2 flex items-center justify-between",
+  };
 
   const handleInputChange = (e) => {
     setUrl(e.target.value);
   };
 
-  const handleShortenClick = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
     setShortUrl("");
     setError(false);
     setErrorMessage("");
     setErrorDescription("");
     if (!url) {
-
       setError(true);
       setErrorMessage("Please enter a URL.");
       setErrorDescription("");
       return;
     }
-    if (!/^https?:\/\//i.test(url)) {
-
+    if (!urlRegex.test(url)) {
       setError(true);
       setErrorMessage("Invalid URL format. URL must start with http:// or https://");
       setErrorDescription("");
@@ -55,43 +67,57 @@ export default function ShortenURL() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
-      <div className="mb-32 flex w-full max-w-5xl flex-col items-center justify-center">
-        <h1 className="text-4xl font-bold mb-8">URL Shortener</h1>
-        <div className="w-full max-w-xl">
-          {error && (
-            <Alert variant="destructive" className="mb-4">
-              <AlertTitle>{errorMessage}</AlertTitle>
-              {errorDescription && <AlertDescription>{errorDescription}</AlertDescription>}
-            </Alert>
-          )}
-          {shortUrl && (
-            <div className="flex items-center mb-4">
-              <Alert variant="success" className="flex-1 mr-2">
-                <a href={"http://localhost:3000/url/" + shortUrl} target="_blank" rel="noopener noreferrer" className="underline">http://localhost:3000/url/{shortUrl}</a>
-              </Alert>
-              <Button
-                variant="outline"
-                onClick={() => navigator.clipboard.writeText(shortUrl)}
+    <main className={darkStyles.main}>
+      <div className={darkStyles.card}>
+        <h1 className={darkStyles.heading}>URL Shortener</h1>
+        {error && (
+          <Alert variant="destructive" className={darkStyles.alert}>
+            <AlertTitle>{errorMessage}</AlertTitle>
+            {errorDescription && <AlertDescription>{errorDescription}</AlertDescription>}
+          </Alert>
+        )}
+        {shortUrl && (
+          <div className="mb-4 w-full flex justify-center">
+            <Alert variant="success" className={darkStyles.success}>
+              <a
+                href={"http://localhost:3000/url/" + shortUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline text-[#a5b4fc] break-all mr-4"
+                style={{ maxWidth: '70%' }}
               >
-                Copy
-              </Button>
-            </div>
-          )}
-          <Input
-            type="url"
-            placeholder="Enter your URL here"
-            className="w-full p-4 text-lg"
-            value={url}
-            onChange={handleInputChange}
-          />
-          <Button
-            className="mt-4 w-full p-4 text-lg"
-            onClick={handleShortenClick}
-          >
-            Shorten URL
-          </Button>
-        </div>
+                http://localhost:3000/url/{shortUrl}
+              </a>
+              <button
+                onClick={() => navigator.clipboard.writeText("http://localhost:3000/url/" + shortUrl)}
+                className={darkStyles.button + " !mt-0 !w-auto !p-2 !text-base !rounded-md flex items-center justify-center"}
+                type="button"
+                aria-label="Copy to clipboard"
+                style={{ padding: 0, width: 36, height: 36 }}
+              >
+                {/* Copy Icon (SVG) */}
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24">
+                  <rect x="9" y="9" width="13" height="13" rx="2" stroke="#a5b4fc" strokeWidth="2" fill="none" />
+                  <rect x="3" y="3" width="13" height="13" rx="2" stroke="#a5b4fc" strokeWidth="2" fill="none" />
+                </svg>
+              </button>
+            </Alert>
+          </div>
+        )}
+        <Input
+          type="url"
+          placeholder="Enter your URL here"
+          className={darkStyles.input}
+          value={url}
+          onChange={handleInputChange}
+        />
+        <Button
+          onClick={handleSubmit}
+          className={darkStyles.button}
+          type="submit"
+        >
+          Shorten URL
+        </Button>
       </div>
     </main>
   );
