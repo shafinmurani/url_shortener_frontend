@@ -108,7 +108,7 @@ export default function ShortenURL() {
         {shortUrl && (
           <div className="mb-4 w-full flex justify-center">
             <Alert variant="success" className={darkStyles.success}>
-              <div className="flex items-center justify-center gap-2 sm:gap-4">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
                 <div ref={qrCodeRef}>
                   <Canvas
                     text={"https://url-shortener-ten-peach.vercel.app/" + shortUrl}
