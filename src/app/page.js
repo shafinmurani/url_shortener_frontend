@@ -1,6 +1,5 @@
 "use client";
 
-
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import React from 'react';
@@ -20,13 +19,13 @@ export default function ShortenURL() {
   const urlRegex = /^(https?:\/\/)?([\w-]+(\.[\w-]+)+)(\/[\w-./?%&=]*)?$/i;
 
   const darkStyles = {
-    main: "flex min-h-screen flex-col items-center justify-center p-24 bg-[#18181b] text-white",
-    card: "mb-32 flex w-full max-w-5xl flex-col items-center justify-center bg-[#23232a] rounded-xl shadow-2xl border border-[#333] p-8", // Added padding
-    heading: "text-4xl font-bold mb-8 text-white drop-shadow-lg",
-    input: "w-full p-4 text-lg bg-[#23232a] text-white border border-[#333] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6366f1]",
+    main: "flex min-h-screen flex-col items-center justify-center bg-[#18181b] text-white px-4",
+    card: "mb-32 flex w-full max-w-5xl flex-col items-center justify-center bg-[#23232a] rounded-xl shadow-2xl border border-[#333] p-8 sm:p-6 xs:p-4",
+    heading: "text-4xl font-bold mb-8 text-white drop-shadow-lg text-center",
+    input: "w-full p-4 text-lg bg-[#23232a] text-white border border-[#333] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6366f1] mb-2",
     button: "mt-4 w-full p-4 text-lg font-bold rounded-lg bg-[#6366f1] text-white shadow-lg transition-all duration-200 border-2 border-transparent hover:shadow-2xl hover:border-[#a5b4fc] hover:ring-2 hover:ring-[#a5b4fc] focus:outline-none focus:ring-2 focus:ring-[#6366f1] cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed",
     alert: "mb-4 bg-[#23232a] text-white border border-[#6366f1] rounded-lg shadow-lg",
-    success: "flex-1 bg-[#23232a] text-[#a5b4fc] border border-[#6366f1] rounded-lg shadow-lg px-4 py-2 flex items-center justify-between",
+    success: "flex-1 bg-[#23232a] text-[#a5b4fc] border border-[#6366f1] rounded-lg shadow-lg px-4 py-2 flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4",
   };
 
   const handleInputChange = (e) => {
@@ -71,7 +70,7 @@ export default function ShortenURL() {
   };
 
   return (
-    <main className={darkStyles.main}>
+    <main className={darkStyles.main + " relative"}>
       <div className={darkStyles.card}>
         <h1 className={darkStyles.heading}>URL Shortener</h1>
         {error && (
@@ -87,8 +86,8 @@ export default function ShortenURL() {
                 href={"https://url-shortener-ten-peach.vercel.app/" + shortUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="underline text-[#a5b4fc] break-all mr-4"
-                style={{ maxWidth: '70%' }}
+                className="underline text-[#a5b4fc] break-all sm:mr-4 mb-2 sm:mb-0"
+                style={{ maxWidth: '100%' }}
               >
                 https://url-shortener-ten-peach.vercel.app/{shortUrl}
               </a>
@@ -100,7 +99,7 @@ export default function ShortenURL() {
                 className={darkStyles.button + " !mt-0 !w-auto !p-2 !text-base !rounded-md flex items-center justify-center"}
                 type="button"
                 aria-label="Copy to clipboard"
-                style={{ padding: 0, width: 36, height: 36 }}
+                style={{ padding: 0, width: 36, height: 36, minWidth: 36 }}
                 disabled={loading}
               >
                 {/* Copy Icon (SVG) */}
@@ -143,10 +142,10 @@ export default function ShortenURL() {
         </form>
       </div>
       <footer
-        className="absolute bottom-4 left-0 w-full flex justify-center text-sm text-gray-400 select-none"
+        className="absolute bottom-4 left-0 w-full flex justify-center text-sm text-gray-400 select-none px-2"
         style={{ pointerEvents: 'auto' }}
       >
-        <div className="flex items-center">
+        <div className="flex items-center flex-wrap">
           <span className="text-gray-400 mr-2">A project by</span>
           <motion.a
             href="https://shafinmurani.github.io"
@@ -162,10 +161,12 @@ export default function ShortenURL() {
               textShadow: "0 0 8px #a5b4fc, 0 0 16px #6366f1"
             }}
             transition={{ type: "spring", stiffness: 300 }}
-            className="relative px-4 py-2 rounded-lg font-semibold text-[#a5b4fc] bg-[#23232a] shadow-lg transition-all duration-200 border border-[#6366f1] cursor-pointer"
+            className="relative px-4 py-2 rounded-lg font-semibold text-[#a5b4fc] bg-[#23232a] shadow-lg transition-all duration-200 border border-[#6366f1] cursor-pointer mt-2 sm:mt-0"
             style={{
               boxShadow: '0 2px 8px rgba(99,102,241,0.2)',
-              marginLeft: '0.5rem'
+              marginLeft: '0.5rem',
+              minWidth: '120px',
+              textAlign: 'center'
             }}
           >
             Shafin Murani
