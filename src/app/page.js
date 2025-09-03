@@ -86,16 +86,16 @@ export default function ShortenURL() {
           <div className="mb-4 w-full flex justify-center">
             <Alert variant="success" className={darkStyles.success}>
               <a
-                href={"http://localhost:3000/url/" + shortUrl}
+                href={"https://url-shortener-ten-peach.vercel.app/" + shortUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline text-[#a5b4fc] break-all mr-4"
                 style={{ maxWidth: '70%' }}
               >
-                http://localhost:3000/url/{shortUrl}
+                https://url-shortener-ten-peach.vercel.app/{shortUrl}
               </a>
               <button
-                onClick={() => navigator.clipboard.writeText("http://localhost:3000/url/" + shortUrl)}
+                onClick={() => navigator.clipboard.writeText("https://url-shortener-ten-peach.vercel.app/" + shortUrl)}
                 className={darkStyles.button + " !mt-0 !w-auto !p-2 !text-base !rounded-md flex items-center justify-center"}
                 type="button"
                 aria-label="Copy to clipboard"
