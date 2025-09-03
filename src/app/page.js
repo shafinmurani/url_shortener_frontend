@@ -4,13 +4,11 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import React from 'react';
-
 import { shortenUrl } from "@/services/shorten";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-
-
-
 import { motion } from 'framer-motion';
+import { Toaster } from "@/components/ui/sonner"
+import { toast } from "sonner";
 
 export default function ShortenURL() {
   const [url, setUrl] = React.useState("");
@@ -95,7 +93,10 @@ export default function ShortenURL() {
                 https://url-shortener-ten-peach.vercel.app/{shortUrl}
               </a>
               <button
-                onClick={() => navigator.clipboard.writeText("https://url-shortener-ten-peach.vercel.app/" + shortUrl)}
+                onClick={() => {
+                  navigator.clipboard.writeText("https://url-shortener-ten-peach.vercel.app/" + shortUrl)
+                  toast.success("Copied to clipboard!")
+                }}
                 className={darkStyles.button + " !mt-0 !w-auto !p-2 !text-base !rounded-md flex items-center justify-center"}
                 type="button"
                 aria-label="Copy to clipboard"
@@ -138,6 +139,7 @@ export default function ShortenURL() {
               'Shorten URL'
             )}
           </Button>
+          <Toaster richColors />
         </form>
       </div>
     </main>
