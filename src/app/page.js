@@ -142,6 +142,36 @@ export default function ShortenURL() {
           <Toaster richColors />
         </form>
       </div>
+      <footer
+        className="absolute bottom-4 left-0 w-full flex justify-center text-sm text-gray-400 select-none"
+        style={{ pointerEvents: 'auto' }}
+      >
+        <div className="flex items-center">
+          <span className="text-gray-400 mr-2">A project by</span>
+          <motion.a
+            href="https://shafinmurani.github.io"
+            target="_blank"
+            rel="noopener noreferrer"
+            initial={false}
+            whileHover={{
+              scale: 1.07,
+              boxShadow: "0 0 24px 4px #a5b4fc, 0 0 8px 2px #6366f1",
+              backgroundColor: "#18181b",
+              color: "#fff",
+              borderColor: "#a5b4fc",
+              textShadow: "0 0 8px #a5b4fc, 0 0 16px #6366f1"
+            }}
+            transition={{ type: "spring", stiffness: 300 }}
+            className="relative px-4 py-2 rounded-lg font-semibold text-[#a5b4fc] bg-[#23232a] shadow-lg transition-all duration-200 border border-[#6366f1] cursor-pointer"
+            style={{
+              boxShadow: '0 2px 8px rgba(99,102,241,0.2)',
+              marginLeft: '0.5rem'
+            }}
+          >
+            Shafin Murani
+          </motion.a>
+        </div>
+      </footer>
     </main>
   );
 }
