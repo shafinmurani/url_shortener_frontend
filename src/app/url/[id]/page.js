@@ -11,7 +11,7 @@ export default function Page({ params }) {
     useEffect(() => {
         const fetchAndRedirect = async () => {
             try {
-                const apiUrl = `http://localhost:5000/get/`;
+                const apiUrl = `https://url-shortener-backend-gray.vercel.app/get/`;
                 const { id } = params;
                 const res = await axios.post(apiUrl, { id });
                 if (res.data && res.data.originalUrl) {

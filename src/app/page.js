@@ -9,12 +9,16 @@ import { shortenUrl } from "@/services/shorten";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 
+
+import { motion } from 'framer-motion';
+
 export default function ShortenURL() {
   const [url, setUrl] = React.useState("");
   const [shortUrl, setShortUrl] = React.useState("");
   const [error, setError] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState("");
   const [errorDescription, setErrorDescription] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
   const urlRegex = /^(https?:\/\/)?([\w-]+(\.[\w-]+)+)(\/[\w-./?%&=]*)?$/i;
 
   const darkStyles = {
@@ -22,7 +26,7 @@ export default function ShortenURL() {
     card: "mb-32 flex w-full max-w-5xl flex-col items-center justify-center bg-[#23232a] rounded-xl shadow-2xl border border-[#333] p-8", // Added padding
     heading: "text-4xl font-bold mb-8 text-white drop-shadow-lg",
     input: "w-full p-4 text-lg bg-[#23232a] text-white border border-[#333] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6366f1]",
-    button: "mt-4 w-full p-4 text-lg font-bold rounded-lg bg-[#6366f1] text-white shadow-lg transition-all duration-200 border-2 border-transparent hover:shadow-2xl hover:border-[#a5b4fc] hover:ring-2 hover:ring-[#a5b4fc] focus:outline-none focus:ring-2 focus:ring-[#6366f1] cursor-pointer",
+    button: "mt-4 w-full p-4 text-lg font-bold rounded-lg bg-[#6366f1] text-white shadow-lg transition-all duration-200 border-2 border-transparent hover:shadow-2xl hover:border-[#a5b4fc] hover:ring-2 hover:ring-[#a5b4fc] focus:outline-none focus:ring-2 focus:ring-[#6366f1] cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed",
     alert: "mb-4 bg-[#23232a] text-white border border-[#6366f1] rounded-lg shadow-lg",
     success: "flex-1 bg-[#23232a] text-[#a5b4fc] border border-[#6366f1] rounded-lg shadow-lg px-4 py-2 flex items-center justify-between",
   };
@@ -31,7 +35,7 @@ export default function ShortenURL() {
     setUrl(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setShortUrl("");
     setError(false);
@@ -55,15 +59,17 @@ export default function ShortenURL() {
       setErrorDescription("");
       return;
     }
-    shortenUrl(url)
-      .then((shortUrl) => {
-        setShortUrl(shortUrl);
-      })
-      .catch((error) => {
-        setError(true);
-        setErrorMessage("Failed to shorten URL.");
-        setErrorDescription(error.message || "An unexpected error occurred.");
-      });
+    setLoading(true);
+    try {
+      const shortUrlResult = await shortenUrl(url);
+      setShortUrl(shortUrlResult);
+    } catch (error) {
+      setError(true);
+      setErrorMessage("Failed to shorten URL.");
+      setErrorDescription(error.message || "An unexpected error occurred.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -94,6 +100,7 @@ export default function ShortenURL() {
                 type="button"
                 aria-label="Copy to clipboard"
                 style={{ padding: 0, width: 36, height: 36 }}
+                disabled={loading}
               >
                 {/* Copy Icon (SVG) */}
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24">
@@ -104,20 +111,34 @@ export default function ShortenURL() {
             </Alert>
           </div>
         )}
-        <Input
-          type="url"
-          placeholder="Enter your URL here"
-          className={darkStyles.input}
-          value={url}
-          onChange={handleInputChange}
-        />
-        <Button
-          onClick={handleSubmit}
-          className={darkStyles.button}
-          type="submit"
-        >
-          Shorten URL
-        </Button>
+        <form onSubmit={handleSubmit} className="w-full">
+          <Input
+            type="url"
+            placeholder="Enter your URL here"
+            className={darkStyles.input}
+            value={url}
+            onChange={handleInputChange}
+            disabled={loading}
+          />
+          <Button
+            className={darkStyles.button}
+            type="submit"
+            disabled={loading}
+          >
+            {loading ? (
+              <span className="flex items-center justify-center">
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                  className="w-5 h-5 border-2 border-[#a5b4fc] border-t-transparent rounded-full mr-2"
+                />
+                Loading...
+              </span>
+            ) : (
+              'Shorten URL'
+            )}
+          </Button>
+        </form>
       </div>
     </main>
   );
