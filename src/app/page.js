@@ -8,8 +8,11 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { motion } from 'framer-motion';
 import { Toaster } from "@/components/ui/sonner"
 import { toast } from "sonner";
+import { useQRCode } from 'next-qrcode';
+
 
 export default function ShortenURL() {
+
   const [url, setUrl] = React.useState("");
   const [shortUrl, setShortUrl] = React.useState("");
   const [error, setError] = React.useState(false);
@@ -17,6 +20,29 @@ export default function ShortenURL() {
   const [errorDescription, setErrorDescription] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const urlRegex = /^(https?:\/\/)?([\w-]+(\.[\w-]+)+)(\/[\w-./?%&=]*)?$/i;
+  const { Canvas } = useQRCode();
+  const qrCodeRef = React.useRef(null);
+
+  const prepareURL = () => {
+    const qrCanvas = qrCodeRef.current?.querySelector("canvas");
+    if (!qrCanvas) {
+      toast.error("ERR");
+      return;
+    }
+
+    try {
+      const asUrl = qrCanvas.toDataURL("image/png");
+      const link = document.createElement("a");
+      link.href = asUrl;
+      link.download = "qrcode.png";
+      link.click();
+      toast.success("QR code downloaded!");
+    } catch (error) {
+      console.error("Error generating QR code image:", error);
+      toast.error("Failed to generate QR code.");
+    }
+  };
+
 
   const darkStyles = {
     main: "flex min-h-screen flex-col items-center justify-center bg-[#18181b] text-white px-4",
@@ -82,33 +108,67 @@ export default function ShortenURL() {
         {shortUrl && (
           <div className="mb-4 w-full flex justify-center">
             <Alert variant="success" className={darkStyles.success}>
-              <a
-                href={"https://url-shortener-ten-peach.vercel.app/" + shortUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline text-[#a5b4fc] break-all sm:mr-4 mb-2 sm:mb-0"
-                style={{ maxWidth: '100%' }}
-              >
-                https://url-shortener-ten-peach.vercel.app/{shortUrl}
-              </a>
-              <button
-                onClick={() => {
-                  navigator.clipboard.writeText("https://url-shortener-ten-peach.vercel.app/" + shortUrl)
-                  toast.success("Copied to clipboard!")
-                }}
-                className={darkStyles.button + " !mt-0 !w-auto !p-2 !text-base !rounded-md flex items-center justify-center"}
-                type="button"
-                aria-label="Copy to clipboard"
-                style={{ padding: 0, width: 36, height: 36, minWidth: 36 }}
-                disabled={loading}
-              >
-                {/* Copy Icon (SVG) */}
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24">
-                  <rect x="9" y="9" width="13" height="13" rx="2" stroke="#a5b4fc" strokeWidth="2" fill="none" />
-                  <rect x="3" y="3" width="13" height="13" rx="2" stroke="#a5b4fc" strokeWidth="2" fill="none" />
-                </svg>
-              </button>
+              <div className="flex items-center justify-center gap-2 sm:gap-4">
+                <div ref={qrCodeRef}>
+                  <Canvas
+                    text={"https://url-shortener-ten-peach.vercel.app/" + shortUrl}
+                    options={{
+                      errorCorrectionLevel: 'M',
+                      margin: 3,
+                      scale: 4,
+                      width: 200,
+                      color: {
+                        dark: '#010599FF',
+                        light: '#FFF',
+                      },
+                    }}
+                  />
+                </div>
+                <a
+                  href={"https://url-shortener-ten-peach.vercel.app/" + shortUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline text-[#a5b4fc] break-all sm:mr-4 mb-2 sm:mb-0"
+                  style={{ maxWidth: '100%' }}
+                >
+                  https://url-shortener-ten-peach.vercel.app/{shortUrl}
+                </a>
+              </div>
+              <div className="flex items-center justify-center gap-2 sm:gap-4">
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText("https://url-shortener-ten-peach.vercel.app/" + shortUrl)
+                    toast.success("Copied to clipboard!")
+                  }}
+                  className={darkStyles.button + " !mt-0 !w-auto !p-2 !text-base !rounded-md flex items-center justify-center"}
+                  type="button"
+                  aria-label="Copy to clipboard"
+                  style={{ padding: 0, width: 36, height: 36, minWidth: 36 }}
+                  disabled={loading}
+                >
+                  {/* Copy Icon (SVG) */}
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24">
+                    <rect x="9" y="9" width="13" height="13" rx="2" stroke="#a5b4fc" strokeWidth="2" fill="none" />
+                    <rect x="3" y="3" width="13" height="13" rx="2" stroke="#a5b4fc" strokeWidth="2" fill="none" />
+                  </svg>
+                </button>
+                <button
+                  onClick={prepareURL}
+                  className={darkStyles.button + " !mt-0 !w-auto !p-2 !text-base !rounded-md flex items-center justify-center"}
+                  type="button"
+                  aria-label="Download QR Code"
+                  style={{ padding: 0, width: 36, height: 36, minWidth: 36 }}
+                  disabled={loading}
+                >
+                  {/* Download Icon (SVG) */}
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24">
+                    <path d="M12 16V4M12 16l-5-5M12 16l5-5" stroke="#a5b4fc" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    <rect x="4" y="18" width="16" height="2" rx="1" fill="#a5b4fc" />
+                  </svg>
+                </button>
+              </div>
             </Alert>
+
           </div>
         )}
         <form onSubmit={handleSubmit} className="w-full">
